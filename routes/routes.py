@@ -2,8 +2,9 @@ import os
 import base64
 import requests
 from fastapi import APIRouter, HTTPException, Path
-from midtrans_api.models.models import ErrorResponse, PaymentData, create_transactions
+
 from midtransclient import Snap
+from models.models import ErrorResponse, PaymentData, create_transactions
 
 
 # Create a router instance
