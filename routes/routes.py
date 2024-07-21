@@ -12,7 +12,7 @@ router = APIRouter()
 
 # environment variables
 server_key = "SB-Mid-server-vqeco_ROAYK6PiDn_o9Qs0tB"
-payment_url = "https://app.sandbox.midtrans.com/snap/v2/vtweb/"
+payment_url = "https://app.sandbox.midtrans.com/snap/v2/vtweb"
 transaction_url = "https://api.sandbox.midtrans.com/v2"
 
 
