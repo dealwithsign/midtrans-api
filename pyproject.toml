@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "midtrans-api"
 version = "0.1.0"
-description = ""
+description = "api for create payment and get transaction status"
 authors = ["braiyenmassora@gmail.com"]
 readme = "README.md"
 
@@ -16,6 +16,7 @@ motor = "^3.5.1"
 pydantic = "^2.8.2"
 ngrok = "^1.3.0"
 midtransclient = "^1.4.2"
+httpx = "^0.27.0"
 
 
 [build-system]

@@ -6,14 +6,17 @@ from fastapi import APIRouter, HTTPException, Path
 from midtransclient import Snap
 from models.models import ErrorResponse, PaymentData, create_transactions
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
+# Load the environment variables
+server_key = os.getenv("server_key")
+payment_url = os.getenv("payment_url")
+transaction_url = os.getenv("transaction_url")
 
 # Create a router instance
 router = APIRouter()
-
-# environment variables
-server_key = "SB-Mid-server-vqeco_ROAYK6PiDn_o9Qs0tB"
-payment_url = "https://app.sandbox.midtrans.com/snap/v2/vtweb"
-transaction_url = "https://api.sandbox.midtrans.com/v2"
 
 
 if not server_key:
@@ -25,10 +28,10 @@ snap = Snap(
     server_key=server_key,
 )
 
+
 # Function to get the authorization string
 def get_auth_string():
     return base64.b64encode(server_key.encode()).decode()
-
 
 
 @router.post(
@@ -75,10 +78,11 @@ async def create_payment_url(payment_data: PaymentData):
         "redirect_url": f"{payment_url}/{transaction_token}",
     }
 
+
 @router.get("/v1/{order_id}/status")
 async def get_order_status(order_id: str = Path(...)):
     """Gets the status of an order."""
-    
+
     url = f"{transaction_url}/{order_id}/status"
     auth_string = get_auth_string()
     headers = {
@@ -97,6 +101,8 @@ async def get_order_status(order_id: str = Path(...)):
 
     response_data = response.json()
     if "payment_amounts" in response_data:
-        del response_data["payment_amounts"]  # remove payment_amounts from the dictionary
+        del response_data[
+            "payment_amounts"
+        ]  # remove payment_amounts from the dictionary
 
     return response_data
