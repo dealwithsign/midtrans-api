@@ -12,10 +12,9 @@ load_dotenv()
 
 # Load the environment variables
 server_key = os.getenv("server_key")
-payment_url = os.getenv("payment_url")
-transaction_url = os.getenv("transaction_url")
+payment_url = "https://app.sandbox.midtrans.com/snap/v2/vtweb"
+transaction_url = "https://api.sandbox.midtrans.com/v2"
 
-# Create a router instance
 router = APIRouter()
 
 
@@ -27,6 +26,11 @@ snap = Snap(
     is_production=False,
     server_key=server_key,
 )
+
+@router.get("/")
+async def health_check():
+    """Returns a simple message to indicate the API is running."""
+    return "Midtrans Payment Links API is running!"
 
 
 # Function to get the authorization string

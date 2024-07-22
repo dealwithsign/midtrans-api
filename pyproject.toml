@@ -2,7 +2,7 @@
 name = "midtrans-api"
 version = "0.1.0"
 description = "api for create payment and get transaction status"
-authors = ["braiyenmassora@gmail.com"]
+authors = ["Braiyen Massora <braiyenmassora@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
