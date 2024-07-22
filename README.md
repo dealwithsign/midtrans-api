@@ -1,4 +1,4 @@
-## Installation
+# Installation
 
 ### Clone this repo
 
@@ -39,11 +39,32 @@
 
 ```
 
-## Adding Library
+### Adding Library
 
 To add new dependencies, use the following command:
 
 ```bash
   poetry add
 
+```
+
+## Vercel Deployments
+
+NPM Version
+
+```bash
+  8.19.2
+
+```
+
+NODE Version
+
+```bash
+  18.12.0
+```
+
+Vercel CLI
+
+```bash
+  35.1.0
 ```

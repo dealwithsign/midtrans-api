@@ -28,15 +28,36 @@ app = FastAPI(
     
 )
 
-# cross middleware
 app.add_middleware(
     CORSMiddleware,
+    allow_origins=["*"],  # Mengizinkan akses dari semua domain
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-    allow_origins=[
-        "http://localhost:3000",
-    ],
+    allow_methods=["*"],  # Mengizinkan semua metode HTTP (GET, POST, PUT, DELETE, dll.)
+    allow_headers=["*"],  # Mengizinkan semua header
 )
 
+
+# Logging middleware
+@app.middleware("http")
+async def log_requests(request: Request, call_next: Callable):
+    start_time = datetime.now()
+    response: Response = await call_next(request)
+    process_time = (datetime.now() - start_time).total_seconds()
+    logging.info(f"Request: {request.method} {request.url} - Status: {response.status_code} - Time: {process_time}s")
+    return response
+
+# Error handling middleware
+@app.middleware("http")
+async def add_error_handling(request: Request, call_next: Callable):
+    try:
+        response = await call_next(request)
+        if response.status_code >= 400:
+            logging.error(f"Error: {response.status_code} - {response.body.decode()}")
+        return response
+    except Exception as e:
+        logging.error(f"Unhandled Exception: {str(e)}")
+        return Response("Internal Server Error", status_code=500)
+
 app.include_router(router)
+
+
