@@ -142,3 +142,10 @@ poetry.lock
 # Ignore __pycache__ directories
 __pycache__/
 .vercel
+
+# Exclude environment files
+.env.prod
+.env.dev
+
+.pytest_cache/
+__pycache__/

@@ -2,24 +2,26 @@ import os
 import base64
 import requests
 from fastapi import APIRouter, HTTPException, Path
-
 from midtransclient import Snap
 from models.models import ErrorResponse, PaymentData, create_transactions
-
 from dotenv import load_dotenv
+import logging
 
-load_dotenv()
+# Load environment variables
+load_dotenv(".env.dev")
 
 # Load the environment variables
 server_key = os.getenv("server_key")
-payment_url = "https://app.sandbox.midtrans.com/snap/v2/vtweb"
-transaction_url = "https://api.sandbox.midtrans.com/v2"
+payment_url = os.getenv("payment_url")
+transaction_url = os.getenv("transaction_url")
 
-router = APIRouter()
-
-
+# Validate environment variables
 if not server_key:
     raise ValueError("The server_key environment variable must be set")
+if not payment_url:
+    raise ValueError("The payment_url environment variable must be set")
+if not transaction_url:
+    raise ValueError("The transaction_url environment variable must be set")
 
 # Create a Snap MidTrans instance
 snap = Snap(
@@ -27,14 +29,21 @@ snap = Snap(
     server_key=server_key,
 )
 
+# Initialize router
+router = APIRouter()
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+
+
 @router.get("/")
 async def health_check():
     """Returns a simple message to indicate the API is running."""
     return "Midtrans Payment Links API is running!"
 
 
-# Function to get the authorization string
 def get_auth_string():
+    """Generate the authorization string for Midtrans API."""
     return base64.b64encode(server_key.encode()).decode()
 
 
@@ -49,11 +58,11 @@ def get_auth_string():
 )
 async def create_payment_url(payment_data: PaymentData):
     """Creates a payment link using Midtrans."""
-    param = create_transactions(payment_data)  # Directly pass the PaymentData object
+    param = create_transactions(payment_data)
 
     try:
         transaction = snap.create_transaction(param)
-        print("Transaction Response:", transaction)  # Log the response for debugging
+        logging.info("Transaction Response: %s", transaction)
     except Exception as e:
         error_message = str(e)
         if "Duplicate order ID" in error_message:
@@ -73,9 +82,7 @@ async def create_payment_url(payment_data: PaymentData):
             raise HTTPException(status_code=500, detail="Internal Server Error")
 
     transaction_token = transaction["token"]
-    print("Transaction Token:", transaction_token)  # Log the token for debugging
-    if not payment_url:
-        raise ValueError("The payment_url environment variable must be set")
+    logging.info("Transaction Token: %s", transaction_token)
 
     return {
         "token": transaction_token,
@@ -86,7 +93,6 @@ async def create_payment_url(payment_data: PaymentData):
 @router.get("/v1/{order_id}/status")
 async def get_order_status(order_id: str = Path(...)):
     """Gets the status of an order."""
-
     url = f"{transaction_url}/{order_id}/status"
     auth_string = get_auth_string()
     headers = {
@@ -97,16 +103,13 @@ async def get_order_status(order_id: str = Path(...)):
     try:
         response = requests.get(url, headers=headers)
         response.raise_for_status()
-        print("Status Response:", response.json())  # Log the response for debugging
+        logging.info("Status Response: %s", response.json())
     except requests.HTTPError as http_err:
         raise HTTPException(status_code=response.status_code, detail=str(http_err))
     except Exception as err:
         raise HTTPException(status_code=500, detail=str(err))
 
     response_data = response.json()
-    if "payment_amounts" in response_data:
-        del response_data[
-            "payment_amounts"
-        ]  # remove payment_amounts from the dictionary
+    response_data.pop("payment_amounts", None)  # remove payment_amounts if present
 
     return response_data

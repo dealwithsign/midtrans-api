@@ -2,6 +2,7 @@ from typing import List
 from pydantic import BaseModel
 from datetime import datetime, timezone, timedelta
 
+
 class Booking(BaseModel):
     id: str
     carId: str
@@ -21,9 +22,11 @@ class Booking(BaseModel):
     isPayment: bool
     totalPayment: int
 
+
 # Error response model
 class ErrorResponse(BaseModel):
     detail: str
+
 
 # Item detail model
 class ItemDetail(BaseModel):
@@ -31,6 +34,7 @@ class ItemDetail(BaseModel):
     name: str
     price: int
     quantity: int
+
 
 # Customer detail model
 class CustomerDetail(BaseModel):
@@ -40,16 +44,19 @@ class CustomerDetail(BaseModel):
     phone: str
     notes: str
 
+
 # Expiry model
 class Expiry(BaseModel):
     duration: int
     unit: str
+
 
 # Transaction detail model
 class TransactionDetail(BaseModel):
     order_id: str
     gross_amount: int
     payment_link_id: str
+
 
 # Payment data model
 class PaymentData(BaseModel):
@@ -59,6 +66,7 @@ class PaymentData(BaseModel):
     expiry: Expiry
     item_details: List[ItemDetail]
     customer_details: CustomerDetail
+
 
 # Function to build transaction parameters
 def create_transactions(payment_data: PaymentData):
@@ -92,4 +100,3 @@ def create_transactions(payment_data: PaymentData):
             for item in payment_data.item_details
         ],
     }
-

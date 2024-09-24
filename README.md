@@ -6,7 +6,7 @@
   git clone https://github.com/dealwithsign/midtrans-api.git
 ```
 
-### Navigate into the project directory:
+### Navigate into the project directory
 
 ```bash
    cd midtrans-api

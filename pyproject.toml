@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "midtrans-api"
+name = "lalan-midtrans-api"
 version = "0.1.0"
-description = "api for create payment and get transaction status"
+description = "API for processing payments and retrieving transaction statuses in the Lalan app"
 authors = ["Braiyen Massora <braiyenmassora@gmail.com>"]
 readme = "README.md"
 
